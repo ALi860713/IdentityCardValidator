@@ -13,29 +13,43 @@ namespace IdentityCardValidator
             { 'V', 31 }, { 'W', 32 }, { 'X', 33 }, { 'Y', 34 }, { 'Z', 35 }
         };
 
+        private readonly List<KeyValuePair<int, int>> _identityOperationMapping = new List<KeyValuePair<int, int>>
+        {
+            new KeyValuePair<int, int>(1, 0),
+            new KeyValuePair<int, int>(9, 1),
+            new KeyValuePair<int, int>(8, 2),
+            new KeyValuePair<int, int>(7, 3),
+            new KeyValuePair<int, int>(6, 4),
+            new KeyValuePair<int, int>(5, 5),
+            new KeyValuePair<int, int>(4, 6),
+            new KeyValuePair<int, int>(3, 7),
+            new KeyValuePair<int, int>(2, 8),
+            new KeyValuePair<int, int>(1, 9),
+            new KeyValuePair<int, int>(1, 10),
+        };
+
         public bool Validate(string input)
         {
             var inputArray = GetInputArray(input);
 
             var sum = 0;
-            var idStartIndex = 0;
-            for (var index = 10; index > 0; index--, idStartIndex ++)
-            {
-                sum += int.Parse(index.ToString().First().ToString()) * int.Parse(inputArray[idStartIndex]);
-            }
 
-            sum += int.Parse(inputArray[idStartIndex]);
+            foreach (var (operationNumber, position) in _identityOperationMapping)
+            {
+                sum += operationNumber * int.Parse(inputArray[position]);
+            }
 
             return sum % 10 == 0;
         }
 
         private List<string> GetInputArray(string input)
         {
-            var firstIdentityCode = input.Take(1).First();
+            var firstIdentityCodeNumber = _idMapping[input[0]];
             var otherIdentityCode = input.Skip(1).Select(x => x.ToString()).ToList();
-            var firstIdentityCodeNumber = _idMapping[firstIdentityCode];
+
             var x1 = (firstIdentityCodeNumber / 10).ToString();
             var x2 = (firstIdentityCodeNumber % 10).ToString();
+
             otherIdentityCode.Reverse();
             otherIdentityCode.InsertRange(otherIdentityCode.Count, new List<string> { x2, x1 });
             otherIdentityCode.Reverse();
